@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benita Sills, Film Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE quiet working portfolio; one film at a time
+   IDEA a projection booth: one frame lit, the next waiting at the edge of the strip
+   PICTURE a horizontal filmstrip of large stills, the next one peeking in from the right
+   COLOUR white sidebar, pale grey stage, near-black ink; dark: charcoal pair
+   TYPE Inter Tight for names and titles + Inter for text
+   LAYOUT fixed sidebar + stage (strip, then details, then a text index); phone: top bar, strip, details */
+:root{color-scheme:light dark;--side:light-dark(#ffffff,#141414);--bg:light-dark(#f2f2f2,#1c1c1c);--ink:light-dark(#151515,#ededed);--mute:light-dark(#666,#a0a0a0);--line:light-dark(#dedede,#2e2e2e)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100%}
+aside{background:var(--side);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;padding:64px 20px 32px;text-align:center}
+.name{font:700 26px/1.1 "Inter Tight",Inter,sans-serif;letter-spacing:-.02em}
+.title{font-size:13px;letter-spacing:.06em;color:var(--mute);margin-top:6px}
+aside nav{display:flex;flex-direction:column;gap:2px;margin-top:52px}
+aside nav a{display:block;padding:8px 14px;font-size:14px;color:var(--mute)}
+aside nav a:hover,aside nav a[aria-current=page]{color:var(--ink)}
+aside nav a[aria-current=page]{font-weight:600}
+aside nav .gap{height:22px}
+aside .mail{margin-top:auto;font-size:13px;color:var(--mute);overflow-wrap:anywhere}
+main{padding:48px 0 56px;overflow:hidden}
+.pad{padding:0 clamp(16px,4vw,56px)}
+.sample{font-size:13px;color:var(--mute);margin:0 0 18px}
+.head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.head h1{font:700 clamp(26px,3vw,34px)/1.1 "Inter Tight",Inter,sans-serif;letter-spacing:-.02em;margin:0}
+.head p{margin:6px 0 0;color:var(--mute);max-width:40em}
+.ctrl{display:flex;align-items:center;gap:10px}
+.count{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;min-width:3.5em;text-align:center}
+.arrow{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--side);color:var(--ink);font-size:18px;cursor:pointer;display:grid;place-items:center}
+.arrow:hover:not(:disabled){border-color:var(--ink)}
+.arrow:disabled{opacity:.35;cursor:default}
+/* the strip */
+.strip{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:clamp(16px,4vw,56px);padding:0 clamp(16px,4vw,56px) 14px;scrollbar-width:thin;overscroll-behavior-x:contain}
+.strip::after{content:"";flex:0 0 1px}
+.slide{flex:0 0 min(78%,860px);scroll-snap-align:start;min-width:0;transition:opacity .35s}
+.slide:not(.on){opacity:.45}
+.slide:not(.on):hover{opacity:.7}
+.frame{display:block;position:relative;aspect-ratio:16/9;overflow:hidden;background:#222}
+.frame svg{position:absolute;inset:0;width:100%;height:100%}
+.play{position:absolute;left:16px;bottom:16px;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px;border-radius:999px;background:rgba(0,0,0,.62);color:#fff;font-weight:600;font-size:14px}
+.frame:hover .play{background:#000}
+.rt{position:absolute;right:12px;bottom:16px;background:rgba(0,0,0,.62);color:#fff;font-size:13px;padding:3px 8px;border-radius:3px;font-variant-numeric:tabular-nums}
+.info{padding-top:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:8px 32px}
+.info h2{font:700 clamp(22px,2.4vw,28px)/1.15 "Inter Tight",Inter,sans-serif;letter-spacing:-.015em;margin:0}
+.cred{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:14px;color:var(--mute);margin-top:6px}
+.cred b{color:var(--ink);font-weight:600}
+.info p{margin:0;font-size:15px}
+/* text index */
+.index{list-style:none;margin:28px 0 0;padding:14px 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 6px}
+.index button{min-height:40px;padding:0 12px;border:0;border-radius:999px;background:none;color:var(--mute);font:500 14px Inter,sans-serif;cursor:pointer}
+.index button:hover{color:var(--ink);background:var(--side)}
+.index button[aria-current=true]{color:var(--ink);background:var(--side);font-weight:600}
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:32px 56px;max-width:1040px}
+.about h1{font:700 clamp(26px,3vw,34px)/1.1 "Inter Tight",Inter,sans-serif;letter-spacing:-.02em;margin:0 0 16px}
+.about p{font-size:16px;max-width:38em;margin:0 0 14px}
+.about dl{margin:0;display:grid;grid-template-columns:minmax(0,6.5em) minmax(0,1fr);border-top:1px solid var(--line);align-content:start}
+.about dt,.about dd{margin:0;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.about dt{font-weight:600}
+.about dd{color:var(--mute)}
+.contact{margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+.contact .em{font:600 22px/1.2 "Inter Tight",Inter,sans-serif;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1px solid var(--ink);border-radius:999px;background:none;color:var(--ink);font:500 14px Inter,sans-serif;cursor:pointer}
+.btn.solid{background:var(--ink);color:var(--side)}
+.copied{font-size:13px;color:var(--mute);min-height:1.4em;margin-top:8px}
+@media(max-width:1000px){.info{grid-template-columns:minmax(0,1fr)}.about{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:760px){.shell{grid-template-columns:minmax(0,1fr)}aside{position:static;height:auto;padding:28px 16px 12px;border-bottom:1px solid var(--line)}aside nav{flex-direction:row;flex-wrap:wrap;justify-content:center;margin-top:16px}aside nav .gap{display:none}aside .mail{display:none}main{padding-top:28px}.slide{flex-basis:86%}}
+@media(max-width:520px){aside nav a{padding:10px 8px}.ctrl .count{min-width:3em}.play{left:10px;bottom:10px}.rt{bottom:10px}}
+@media(prefers-reduced-motion:reduce){.slide{transition:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside>
+    <a href="#series"><div class="name">Benita Sills</div><div class="title">FILM EDITOR</div></a>
+    <nav id="nav" aria-label="Sections"></nav>
+    <a class="mail" href="#about">jordan@example.com</a>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<script>
+{
+// ===== Sections: order here = order in the menu =====
+const sections=[
+  {k:"series",label:"Series",intro:"Episodic work for PBS and streaming, from weekly broadcast to digital-first."},
+  {k:"documentary",label:"Documentary",intro:"Long-form documentary and four years of broadcast promos for Independent Lens."},
+  {k:"branded",label:"Branded",intro:"Story-driven films for companies, from tech to health care."},
+  {k:"impact",label:"Impact",intro:"Films for foundations and nonprofits working on education, health, technology and the arts."},
+  {k:"political",label:"Political",intro:"Campaign spots for candidates, ballot measures and advocacy groups. Fast turnarounds, built for :30 and :15."}
+];
+// ===== Projects: put your strongest first in each section =====
+// "note" is the line about the film or what the edit had to solve. Replace the sample notes with your own.
+const projects=[
+  {k:"series",title:"Brief But Spectacular",client:"PBS NewsHour",format:"Weekly series",role:"Editor",url:"https://vimeo.com",note:"Emmy-nominated series airing weekly on PBS NewsHour, with 400+ million views."},
+  {k:"series",title:"Tell Me More with Kelly Corrigan",client:"PBS",format:"Interview series",role:"Editor",url:"https://vimeo.com",note:"Long-form interview series across multiple seasons on PBS."},
+  {k:"series",title:"Civics Made Easy",client:"PBS Digital Studios",format:"12-part series",role:"Editor",url:"https://vimeo.com",note:"Host Ben Sheehan breaks down how American government works."},
+  {k:"series",title:"The Drawing Room with Mo Welch",client:"PBS Digital Studios",format:"Digital series",role:"Editor",url:"https://vimeo.com",note:"An interview show where host and guest draw each other while they talk."},
+  {k:"series",title:"Salesforce: Connections",client:"Salesforce",format:"Interview series, multiple seasons",role:"Editor",url:"https://vimeo.com",note:"Interview series streamed on salesforce.com."},
+  {k:"series",title:"Salesforce: Simply Put",client:"Salesforce",format:"Series, multiple seasons",role:"Editor",url:"https://vimeo.com",note:"Multi-season series streamed on salesforce.com."},
+  {k:"documentary",title:"Independent Lens on-air promos",client:"ITVS / PBS",format:":30 and :20 spots",role:"Staff editor, 4 years",url:"https://vimeo.com",note:"Broadcast promos for the PBS documentary series. Reel of selected spots."},
+  {k:"documentary",title:"Vanguard",client:"Current TV",format:"Documentary series",role:"Editor",url:"https://vimeo.com",note:"Peabody Award-winning investigative series with four Emmy nominations."},
+  {k:"documentary",title:"Red Without Blue",client:"Sundance Channel, Netflix",format:"Feature documentary",role:"Editor",url:"https://vimeo.com",note:"Festival award winner, including the Slamdance audience award for documentary."},
+  {k:"documentary",title:"Master of Glass: The Art of Dale Chihuly",client:"Smithsonian Channel",format:"Documentary",role:"Editor",url:"https://vimeo.com",note:"The life and influence of glass artist Dale Chihuly, told by his students, family and Chihuly himself."},
+  {k:"branded",title:"Harvey AI",client:"Harvey",format:"Brand film",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"branded",title:"Charlie Health",client:"Charlie Health",format:"Brand film",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"branded",title:"Foundation Capital",client:"Foundation Capital",format:"Brand film",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"branded",title:"Stanford d.school",client:"Stanford University",format:"Promotional video",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"impact",title:"Gates Foundation",client:"Gates Foundation",format:"Nonprofit film",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"impact",title:"PEN America: President Obama",client:"PEN America",format:"Nonprofit film",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"impact",title:"Voices of AI",client:"Omidyar Network",format:"Series",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"impact",title:"CoGenerate",client:"CoGenerate",format:"Nonprofit film",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"impact",title:"Poetry Foundation",client:"Poetry Foundation",format:"Nonprofit film",role:"Editor",url:"https://vimeo.com",note:"Sample note: what the film had to do and what the edit solved."},
+  {k:"political",title:"ACLU",client:"ACLU",format:"Advocacy spot",role:"Editor",url:"https://vimeo.com",note:"Sample note: the campaign, the ask and the turnaround."},
+  {k:"political",title:"Mayoral race",client:"Candidate name",format:":30 broadcast spot",role:"Editor",url:"https://vimeo.com",note:"Sample note: the campaign, the ask and the turnaround."},
+  {k:"political",title:"Ballot measure",client:"Measure name",format:":30 and :15 spots",role:"Editor",url:"https://vimeo.com",note:"Sample note: the campaign, the ask and the turnaround."},
+  {k:"political",title:"Local candidate",client:"Candidate name",format:"Digital spot",role:"Editor",url:"https://vimeo.com",note:"Sample note: the campaign, the ask and the turnaround."}
+];
+const palettes=[["#1f2a33","#6b8599","#e9c79a"],["#2b211c","#9a6b4f","#f2d3a6"],["#1d2622","#5f7f6e","#d8e0c8"],["#2a1f26","#8a6178","#f0c4b4"],["#232323","#7b7b74","#e6dfcf"],["#1c2433","#58709a","#f6d38a"],["#2e1b1b","#a2493d","#ffd29c"]];
+
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rand=seed=>{let s=seed;return()=>(s=s*16807%2147483647)/2147483647};
+const hash=str=>[...str].reduce((a,c)=>(a*31+c.charCodeAt(0))%2147483646,7)+1;
+// stand-in stills until real frames are added
+const still=p=>{
+  const i=projects.indexOf(p),[d,m,l]=palettes[i%palettes.length],r=rand(hash(p.title)),W=320,H=180,u="s"+i;
+  const hy=H*(.55+r()*.12),sx=.2+r()*.6;
+  const ridges=[0,1,2].map(k=>{const y=hy+k*16;let path=`M0 ${y}`;for(let x=0;x<=W;x+=40)path+=` Q${x+20} ${y-8-r()*22} ${x+40} ${y-r()*6}`;return `<path d="${path} V${H} H0Z" fill="${d}" opacity="${[.45,.7,1][k]}"/>`}).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="g${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${m}"/><stop offset=".75" stop-color="${l}"/></linearGradient><radialGradient id="h${u}" cx="${sx}" cy="${hy/H}" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><filter id="n${u}"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="${i+1}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .2 0"/></filter></defs><rect width="${W}" height="${H}" fill="url(#g${u})"/><rect width="${W}" height="${H}" fill="url(#h${u})"/>${ridges}<rect width="${W}" height="${H}" filter="url(#n${u})"/></svg>`;
+};
+
+const nav=document.getElementById("nav"),main=document.getElementById("main");
+nav.innerHTML=sections.map(s=>`<a href="#${s.k}" data-k="${s.k}">${s.label}</a>`).join("")+`<div class="gap"></div><a href="#about" data-k="about">About</a>`;
+
+let cleanup=null;
+const section=s=>{
+  const list=projects.filter(p=>p.k==s.k);
+  main.innerHTML=`<div class="pad"><p class="sample">Sample stills, links and notes shown. Real frames and Vimeo links go here.</p>
+  <div class="head"><div><h1>${s.label}</h1><p>${esc(s.intro)}</p></div>
+  <div class="ctrl"><button class="arrow" id="prev" type="button" aria-label="Previous film">←</button><span class="count" id="count" aria-live="polite"></span><button class="arrow" id="next" type="button" aria-label="Next film">→</button></div></div></div>
+  <div class="strip" id="strip" tabindex="0" aria-label="${s.label} films">${list.map((p,i)=>`<article class="slide" data-i="${i}">
+    <a class="frame" href="${esc(p.url)}" target="_blank" rel="noopener" aria-label="Watch ${esc(p.title)} on Vimeo">${still(p)}<span class="play">▶ Watch</span></a>
+    <div class="info"><div><h2>${esc(p.title)}</h2><div class="cred"><span><b>${esc(p.role)}</b></span><span>${esc(p.client)}</span><span>${esc(p.format)}</span></div></div><p>${esc(p.note)}</p></div>
+  </article>`).join("")}</div>
+  <div class="pad"><ul class="index" id="index">${list.map((p,i)=>`<li><button type="button" data-i="${i}">${esc(p.title)}</button></li>`).join("")}</ul></div>`;
+
+  const strip=document.getElementById("strip"),slides=[...strip.children].filter(e=>e.classList.contains("slide"));
+  const prev=document.getElementById("prev"),next=document.getElementById("next"),count=document.getElementById("count"),idx=document.getElementById("index");
+  let cur=0;
+  const mark=i=>{cur=i;slides.forEach((el,j)=>el.classList.toggle("on",j==i));count.textContent=`${i+1} / ${slides.length}`;prev.disabled=i==0;next.disabled=i==slides.length-1;idx.querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-current",j==i))};
+  const go=i=>{i=Math.max(0,Math.min(slides.length-1,i));const pad=parseFloat(getComputedStyle(strip).scrollPaddingInlineStart)||0;strip.scrollTo({left:slides[i].offsetLeft-strip.offsetLeft-pad,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});mark(i)};
+  const nearest=()=>{const pad=parseFloat(getComputedStyle(strip).scrollPaddingInlineStart)||0,x=strip.scrollLeft+pad+strip.offsetLeft;let best=0,d=1e9;slides.forEach((el,j)=>{const dd=Math.abs(el.offsetLeft-x);if(dd<d){d=dd;best=j}});return best};
+  let t;const onScroll=()=>{clearTimeout(t);t=setTimeout(()=>mark(nearest()),80)};
+  strip.addEventListener("scroll",onScroll,{passive:true});
+  prev.addEventListener("click",()=>go(cur-1));
+  next.addEventListener("click",()=>go(cur+1));
+  idx.addEventListener("click",e=>{const b=e.target.closest("button");if(b)go(+b.dataset.i)});
+  slides.forEach((el,j)=>el.addEventListener("click",e=>{if(j!=cur){e.preventDefault();go(j)}}));
+  const onKey=e=>{if(e.target.closest("input,textarea"))return;if(e.key=="ArrowRight"){e.preventDefault();go(cur+1)}if(e.key=="ArrowLeft"){e.preventDefault();go(cur-1)}};
+  document.addEventListener("keydown",onKey);
+  mark(0);
+  return ()=>document.removeEventListener("keydown",onKey);
+};
+const about=()=>{main.innerHTML=`<div class="pad"><div class="about"><div>
+  <h1>About</h1>
+  <p>I'm a documentary and short-form editor. I was on staff at ITVS for four years, cutting :30 and :20 on-air promos for PBS's Independent Lens, and have spent the last five years as a staff editor, mostly on short-form documentary series for PBS.</p>
+  <p>Alongside broadcast, I've cut films for foundations and nonprofits, brand work for companies from early-stage startups to Salesforce, and campaign spots for candidates, ballot measures and the ACLU.</p>
+  <p>I'm now taking on freelance projects, owning the whole cut or slotting into an existing post team.</p>
+  <div class="contact"><a class="em" id="em" href="mailto:jordan@example.com">jordan@example.com</a>
+  <div class="row"><button class="btn solid" id="copy" type="button">Copy email</button><a class="btn" href="https://vimeo.com">Vimeo</a><a class="btn" href="https://www.linkedin.com">LinkedIn</a></div>
+  <div class="copied" id="copied" aria-live="polite"></div></div>
+</div><dl>
+  <dt>I do</dt><dd>Interview-driven stories, series editing, documentary, broadcast promos and campaign spots, social cutdowns</dd>
+  <dt>Formats</dt><dd>:15 to :30 spots, 2 to 15 min shorts, episodic series, feature documentary</dd>
+  <dt>Tools</dt><dd>Premiere Pro, Avid Media Composer, DaVinci Resolve, After Effects</dd>
+  <dt>Also for</dt><dd>LeveragED Foundation, Learner Studio, Muscular Dystrophy Foundation, Lafayette Library</dd>
+  <dt>Based in</dt><dd>City, State · remote work welcome</dd>
+</dl></div></div>`;
+  document.getElementById("copy").addEventListener("click",async()=>{const o=document.getElementById("copied");try{await navigator.clipboard.writeText(document.getElementById("em").textContent);o.textContent="Copied to clipboard."}catch(_){o.textContent="Select the address above to copy it."}});
+  return null;
+};
+
+const show=()=>{
+  if(cleanup){cleanup();cleanup=null}
+  const h=location.hash.slice(1)||"series";
+  const s=sections.find(x=>x.k==h);
+  let cur;
+  if(h=="about"){cleanup=about();cur="about"}
+  else{const sec=s||sections[0];cleanup=section(sec);cur=sec.k}
+  nav.querySelectorAll("a").forEach(a=>a.dataset.k==cur?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  window.scrollTo(0,0);
+};
+window.addEventListener("hashchange",show);
+show();
+}
+</script>
+</body>
+</html>
